@@ -7,3 +7,4 @@ tqdm
 pyfiglet
 art
 packaging>=22
+cmake>=3.24,<4

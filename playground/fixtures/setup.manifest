@@ -1,3 +1,2 @@
-[VS2019]
-demo-runtime==1.0: copy bin/* to ./workspace/
-demo-assets==1.0: copy data/* to ./workspace/data/
+[GCC]
+demo-math==1.0: copy include/* to ./workspace/include/

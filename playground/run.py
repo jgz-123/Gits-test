@@ -92,8 +92,8 @@ def main():
     commands.before_check = lambda unused: True
     lean.get_sftp_session = lambda: FixtureSFTP()
     lean._GLOBAL_SSH = FixtureSSH()
-    lean.get_local_os_info = lambda: ("windows", "11")
-    lean.get_vs_version = lambda: "[VS2019]"
+    lean.get_local_os_info = lambda: ("linux", "12")
+    lean.get_vs_version = lambda: "[GCC]"
     # Confine any environment changes to this process, including packages requested directly.
     lean.add_to_system_path_env = lambda path: None
     print("PLAYGROUND: local fixture transport; no SSH authentication or real inference.")

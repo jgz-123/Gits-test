@@ -11,6 +11,27 @@ REPO = Path(__file__).resolve().parents[1]
 STATE = REPO / ".playground"
 
 
+def prepare_package(remote):
+    source = REPO / "playground" / "packages" / "demo-math"
+    members = {
+        "demo-math/" + path.relative_to(source).as_posix(): path.read_bytes()
+        for path in sorted(source.rglob("*")) if path.is_file()
+    }
+    archive = remote / "GCC" / "demo-math" / "stable" / "demo-math@1.0.zip"
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    # Keep timestamps stable on repeat setup, but refresh edited package sources.
+    if archive.exists():
+        with zipfile.ZipFile(archive) as bundle:
+            if set(bundle.namelist()) == set(members) and all(
+                    bundle.read(name) == content for name, content in members.items()):
+                return
+    temporary = archive.with_suffix(".zip.tmp")
+    with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as bundle:
+        for name, content in members.items():
+            bundle.writestr(name, content)
+    temporary.replace(archive)
+
+
 def main():
     runtime = STATE / "runtime"
     runtime.mkdir(parents=True, exist_ok=True)
@@ -38,22 +59,12 @@ def main():
     }, "base_url": "https://example.invalid/"}
     (conf / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
 
-    remote = STATE / "remote" / "windows-11"
+    remote = STATE / "remote" / "linux-12"
     remote.mkdir(parents=True, exist_ok=True)
     (remote / "import.cmake").write_text("# Public demo: no SDK imports.\n", encoding="utf-8")
     (remote / "gits-usage-readme.md").write_text(
-        "# Public fixture packages\n\nThese files do not perform model inference.\n", encoding="utf-8")
-    packages = {
-        "demo-runtime": ("demo-runtime/bin/runtime.txt", "GITS public runtime fixture\n"),
-        "demo-assets": ("data/labels.txt", "fixture-label-not-a-model\n"),
-    }
-    for name, (member, content) in packages.items():
-        archive = remote / "VS2019" / name / "stable" / f"{name}@1.0.zip"
-        archive.parent.mkdir(parents=True, exist_ok=True)
-        # Preserve timestamps on repeat setup so an unchanged fixture stays up to date.
-        if not archive.exists():
-            with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
-                bundle.writestr(member, content)
+        "# Public demo-math package\n\nHeader-only C++ addition example; no model inference.\n", encoding="utf-8")
+    prepare_package(remote)
 
     project = STATE / "project"
     project.mkdir(exist_ok=True)
@@ -68,6 +79,7 @@ def main():
         encoding="utf-8")
     launcher.chmod(0o755)
     print(f"Prepared isolated playground: {project}")
+    print("Try building before gis update: the missing demo_math.hpp error is expected.")
     print(f"Run: {sys.executable} {REPO / 'playground' / 'run.py'} status --lean -m setup.manifest")
 
 
