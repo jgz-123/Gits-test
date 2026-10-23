@@ -1,0 +1,19 @@
+{
+  "repository": "jgz-123/Gits-test",
+  "display_name": "GITS | Edge AI C++ Package Manager",
+  "description": "GITS：边缘AI推理算子C++包管理工具 | Manifest-driven C++ package management and CMake delivery for Edge AI, YOLO and industrial vision.",
+  "topics": [
+    "edge-ai",
+    "yolo",
+    "cpp-package-manager",
+    "inference-optimization",
+    "industrial-ai",
+    "cross-compilation",
+    "cmake",
+    "cpp",
+    "computer-vision",
+    "dependency-management",
+    "manifest",
+    "sdk-management"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "lean": {
+    "lean_remote_ip": "unused.invalid",
+    "lean_remote_port": 22,
+    "lean_remote_user": "demo",
+    "lean_remote_pwd": "",
+    "lean_remote_path": "/srv/gits/lean",
+    "lean_local_path": ".lean-cache"
+  },
+  "base_url": "https://example.invalid/"
+}

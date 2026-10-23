@@ -1,5 +1,5 @@
 {
-  "name": "GITS Public CLI Playground",
+  "name": "GITS Personal Repository Simulation",
   "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "waitFor": "postCreateCommand",
@@ -9,7 +9,11 @@
   },
   "customizations": {
     "codespaces": {
-      "openFiles": ["playground/README.md", ".playground/project/main.cpp", ".playground/project/setup.manifest"]
+      "openFiles": [
+        "README.md",
+        "playground/README.md",
+        ".playground/project/main.cpp"
+      ]
     },
     "vscode": {
       "settings": {
