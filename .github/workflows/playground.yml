@@ -1,0 +1,38 @@
+name: Verify GITS Playground
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install demo dependencies
+        run: python -m pip install -r playground/requirements.txt
+      - name: Prepare a fresh demo
+        run: python playground/bootstrap.py
+      - name: Show missing packages
+        run: python playground/run.py status --lean -m setup.manifest
+      - name: Download and copy packages
+        run: python playground/run.py update --lean -m setup.manifest --no-obj
+      - name: Verify contents and status
+        run: python playground/verify.py
+      - name: Check cache reuse
+        shell: bash
+        run: |
+          set -euo pipefail
+          python playground/run.py update --lean -m setup.manifest --no-obj | tee /tmp/gits-repeat.log
+          python -c "from pathlib import Path; assert 'Total lean packages num: 0' in Path('/tmp/gits-repeat.log').read_text()"
+      - name: Build the C++ delivery check
+        run: |
+          cmake -S .playground/project -B .playground/project/build
+          cmake --build .playground/project/build
+      - name: Run the C++ delivery check
+        run: ./build/delivery_smoke
+        working-directory: .playground/project
