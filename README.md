@@ -68,12 +68,23 @@ demo-assets==1.0: copy data/* to ./workspace/data/
 
 ## 遇到问题
 
+- 终端提示 **recovery mode**：说明正常容器没有创建成功，自动安装脚本尚未运行。先在终端执行 `git pull --ff-only` 获取修复，再按 **Ctrl + Shift + P**，选择 **Codespaces: Rebuild Container**，确认重建。等待初始化完成后新建终端，再执行测试命令。
 - `gis: command not found`：先确认初始化已完成，然后关闭终端并重新打开。可从仓库根目录重新执行 `bash .devcontainer/setup.sh`，完成后再新建终端。
 - 提示找不到 manifest：执行 `cd "$GITS_PLAYGROUND_ROOT/.playground/project"` 后重试。
 - 第一次就是 `0 missing packages`：你之前已更新过，缓存仍在，属于正常情况。新建一个 Codespace 可以从首次下载开始体验。
 - 初始化失败：查看创建日志。需要手动重试时，从仓库根目录执行 `bash .devcontainer/setup.sh`；初始化依赖安装需要联网。
 
 ## 此演示的范围
+
+### gits 如何准备好
+
+创建 Codespace 时，GitHub 先克隆本仓库、启动 Python 容器，再自动运行 `.devcontainer/setup.sh`：
+
+1. 创建 `.playground/venv`，安装 `playground/requirements.txt` 中的 Python 依赖。
+2. 运行 `playground/bootstrap.py`，准备独立的 gits 源码副本、演示配置和示例包。
+3. 生成 `.playground/bin/gis` 启动命令；容器配置将它加入终端 PATH。
+
+看到 `GITS Playground ready!` 才表示初始化完成。`gis` 会通过独立的 Python 环境运行 gits 源码。此处使用项目目录中的启动器，无需运行系统安装命令。CLI 初始化只安装 Python 依赖；C++ 示例的编译检查由另一个 CI 任务完成。
 
 此仓库是 GITS 的独立体验版本，包含真实 CLI 源码和两个自动生成的文本测试包。参数解析、清单解析、选包、版本匹配、解压、拍平、复制和状态检查执行真实逻辑；SSH/SFTP 通过本地文件适配器代替。无需团队服务器账号，不包含生产配置，不执行模型推理。
 

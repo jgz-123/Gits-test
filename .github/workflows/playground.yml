@@ -6,6 +6,23 @@ on:
 permissions:
   contents: read
 jobs:
+  devcontainer:
+    name: Codespaces container and initialization
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the configured container and run the installed launcher
+        uses: devcontainers/ci@v0.3
+        with:
+          push: never
+          runCmd: |
+            set -eu
+            cd "$GITS_PLAYGROUND_ROOT/.playground/project"
+            command -v gis
+            gis status --lean -m setup.manifest
+            gis update --lean -m setup.manifest --no-obj
+            python "$GITS_PLAYGROUND_ROOT/playground/verify.py"
   demo:
     runs-on: ubuntu-latest
     steps:
